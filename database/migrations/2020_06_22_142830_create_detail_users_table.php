@@ -15,7 +15,7 @@ class CreateDetailUsersTable extends Migration
     {
         Schema::create('detail_users', function (Blueprint $table) {
             
-            $table->unsignedBigInt('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('address');
             $table->string('phone');
 

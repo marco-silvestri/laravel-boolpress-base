@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DetailUser extends Model
 {
     protected $fillable = [
+        'user_id',
         'address',
         'phone'
     ];
@@ -14,4 +15,6 @@ class DetailUser extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+
+    public $timestamps = false;
 }

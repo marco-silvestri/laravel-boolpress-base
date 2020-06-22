@@ -26,7 +26,7 @@ class User extends Authenticatable
     ];
 
     public function detail(){
-        return $this->hasOne('App\DetailUser');
+        return $this->hasOne('App\Detail\User');
     }
 
     public function posts(){
