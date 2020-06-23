@@ -6,6 +6,7 @@
         <h3>{{ $post->title }}</h3>
         <p>{{ $post->body }}</p>
         <p>written by {{ $post->user->name }}</p>
+        <a href="{{ route('posts.show', $post->id) }}">Read more...</a>
         @if ($loop->last)
         <hr>
         @endif
