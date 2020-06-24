@@ -1,8 +1,8 @@
 @extends('layouts/main')
 
 @section('main-content')
-<link rel="stylesheet" href="carousel.css">
-<section class="hero is-fullheight-with-navbar is-success is-bold">
+<link rel="stylesheet" href="styles/carousel.css">
+<section class="hero is-medium is-success is-bold pb-6">
     <div class="hero-body">
         <div class="container">
             <h1 class="title is-size-2">Welcome to Boolpress</h1>
@@ -12,12 +12,13 @@
                 <div class="app__gallery">
                     <!-- Images wrapper -->
                     <div class="frame">
-                        <img src="https://picsum.photos/id/46/1400/400.jpg" alt="" class="app__img active">
-                        <img src="https://picsum.photos/id/41/1400/400.jpg" alt="" class="app__img">
-                        <img src="https://picsum.photos/id/51/1400/400.jpg" alt="" class="app__img">
-                        <img src="https://picsum.photos/id/43/1400/400.jpg" alt="" class="app__img">
-                        <img src="https://picsum.photos/id/44/1400/400.jpg" alt="" class="app__img">
-                        <img src="https://picsum.photos/id/45/1400/400.jpg" alt="" class="app__img">
+                        @foreach ($carousel as $image)
+                            <img src="{{ $image->url }}" alt="" class="app__img 
+                            @if ($loop->first)
+                                active
+                            @endif
+                            ">    
+                        @endforeach
                     </div>
                     <div id="app__radio-area">
                     </div>    
@@ -27,5 +28,5 @@
     </div>
 </section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="carousel.js"></script>
+<script src="scripts/carousel.js"></script>
 @endsection
