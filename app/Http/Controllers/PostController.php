@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Post;
+use App\Tag;
 
 class PostController extends Controller
 {
@@ -14,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::orderBy('created_at', 'desc')->paginate(10);
         return view('posts.index', compact('posts'));
     }
 
@@ -25,7 +27,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $tags = Tag::all();
+
+        return view('posts.create', compact('tags'));
     }
 
     /**
@@ -36,7 +40,27 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'body' => 'required',
+            'tags.*' => 'exists:tags,id' //.* all the values of the collection
+        ]);
+
+        $data = $request->all();
+        $data['user_id'] = 1;
+        $data['slug']= Str::slug($data['title'], '-');
+
+        $newPost = new Post();
+        $newPost->fill($data);
+        $saved = $newPost->save();
+
+        if ($saved) {
+            if ( !empty($data['tags'])){
+                $newPost->tags()->attach($data['tags']);
+            }
+        }
+
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -45,8 +69,14 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($slug)
     {
+        $post = Post::where('slug', $slug)->first();
+
+        if (empty($post)) {
+            abort('404');
+        }
+
         return view('posts.show', compact('post'));
     }
 
@@ -56,9 +86,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        $tags = Tag::all();
+
+        return view('posts.edit', compact('post','tags'));
     }
 
     /**
@@ -68,9 +100,27 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        //refact
+        $request->validate([
+            'title' => 'required|max:255',
+            'body' => 'required',
+            'tags.*' => 'exists:tags,id' //.* all the values of the collection
+        ]);
+
+        $data = $request->all();
+        $updated = $post->update($data);
+
+        if ($updated){
+            if (!empty($data['tags'])){
+                $post->tags()->sync($data['tags']);
+            } else {
+                $post->tags()->detach();
+            }
+        }
+
+        return redirect()->route('posts.show', $post->slug);
     }
 
     /**
@@ -79,8 +129,18 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        if (empty($post)){
+            abort('404');
+        }
+
+        $oldPost = $post->title;
+        $post->tags()->detach();
+        $deleted = $post->delete();
+
+        if ($deleted){
+            return redirect()->route('posts.index')->with('hasDeleted', $oldPost);
+        }
     }
 }
