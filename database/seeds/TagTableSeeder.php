@@ -13,10 +13,10 @@ class TagTableSeeder extends Seeder
     public function run()
     {
         $tags = [
-            'Educational',
-            'Laravel',
-            'PHP',
-            'HTML'
+            'Personal',
+            'Discussion',
+            'Technology',
+            'AOB'
         ];
 
         foreach ($tags as $tag){
