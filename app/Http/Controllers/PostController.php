@@ -87,6 +87,7 @@ class PostController extends Controller
 
         $oldPost = $post->title;
         $post->tags()->detach();
+        $post->comments()->delete();
         $deleted = $post->delete();
 
         if ($deleted){
